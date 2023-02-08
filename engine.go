@@ -107,10 +107,72 @@ func NewInputTensor[E any](value [][]E) Tensor {
 	}
 }
 
+func NewInputTensorFromOneDimSlice[E any](slice []E) Tensor {
+	if len(slice) == 0 {
+		return Tensor{}
+	}
+	return Tensor{
+		Shape: []int32{int32(len(slice))},
+		Data:  slice,
+	}
+}
+
+func NewInputTensorFromTwoDimSlice[E any](slice [][]E) Tensor {
+	if len(slice) == 0 {
+		return Tensor{}
+	}
+
+	var flattened []E
+	for _, d := range slice {
+		flattened = append(flattened, d...)
+	}
+
+	batchSize, dataSize := len(slice), len(slice[0])
+	return Tensor{
+		Shape: []int32{int32(batchSize), int32(dataSize)},
+		Data:  flattened,
+	}
+}
+
 func numElements(shape []int32) int32 {
 	n := int32(1)
 	for _, v := range shape {
 		n *= v
 	}
 	return n
+}
+
+type TypedTensor[E Number] struct {
+	Shape []int32
+	Data  []E
+}
+
+func NewTypedTensor[E Number](t Tensor) TypedTensor[E] {
+	var data []E
+	switch v := t.Data.(type) {
+	case []float32:
+		for _, d := range v {
+			data = append(data, E(d))
+		}
+	case []int32:
+		for _, d := range v {
+			data = append(data, E(d))
+		}
+	case []int64:
+		for _, d := range v {
+			data = append(data, E(d))
+		}
+	case []uint8:
+		for _, d := range v {
+			data = append(data, E(d))
+		}
+	case []int8:
+		for _, d := range v {
+			data = append(data, E(d))
+		}
+	}
+	return TypedTensor[E]{
+		Shape: t.Shape,
+		Data:  data,
+	}
 }
