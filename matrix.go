@@ -4,20 +4,53 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-type Matrix struct {
+type Matrix[E Number] struct {
 	m *mat.Dense
 }
 
-func NewMatrix[E Number](t TypedTensor[E]) *Matrix {
-	if len(t.Shape) != 2 {
+func NewMatrix[E Number](t Tensor) *Matrix[E] {
+	tt := NewTypedTensor[E](t)
+	if len(tt.Shape) != 2 {
 		panic("t is not a matrix")
 	}
 
-	m := mat.NewDense(int(t.Shape[0]), int(t.Shape[1]), NumberToFloat64(t.Data))
-	return &Matrix{m: m}
+	m := mat.NewDense(int(tt.Shape[0]), int(tt.Shape[1]), NumberToFloat64(tt.Data))
+	return &Matrix[E]{m: m}
 }
 
-func (m *Matrix) Norm() *Matrix {
+func (m *Matrix[E]) Row(i int) []E {
+	r := mat.Row(nil, i, m.m)
+	return Float64ToNumber[E](r)
+}
+
+func (m *Matrix[E]) Col(j int) []E {
+	c := mat.Col(nil, j, m.m)
+	return Float64ToNumber[E](c)
+}
+
+func (m *Matrix[E]) Rows() [][]E {
+	var rows [][]E
+
+	r, _ := m.m.Dims()
+	for i := 0; i < r; i++ {
+		rows = append(rows, m.Row(i))
+	}
+
+	return rows
+}
+
+func (m *Matrix[E]) Cols() [][]E {
+	var cols [][]E
+
+	_, c := m.m.Dims()
+	for j := 0; j < c; j++ {
+		cols = append(cols, m.Col(j))
+	}
+
+	return cols
+}
+
+func (m *Matrix[E]) Norm() *Matrix[E] {
 	r, c := m.m.Dims()
 
 	norm := m.m.Norm(2) // the square root of the sum of the squares of the elements
@@ -32,38 +65,6 @@ func (m *Matrix) Norm() *Matrix {
 	return m
 }
 
-func (m *Matrix) RawData() []float64 {
-	return m.m.RawMatrix().Data
-}
-
-func Row[E Number](m *Matrix, i int) []E {
-	r := mat.Row(nil, i, m.m)
-	return Float64ToNumber[E](r)
-}
-
-func Col[E Number](m *Matrix, j int) []E {
-	c := mat.Col(nil, j, m.m)
-	return Float64ToNumber[E](c)
-}
-
-func Rows[E Number](m *Matrix) [][]E {
-	var rows [][]E
-
-	r, _ := m.m.Dims()
-	for i := 0; i < r; i++ {
-		rows = append(rows, Row[E](m, i))
-	}
-
-	return rows
-}
-
-func Cols[E Number](m *Matrix) [][]E {
-	var cols [][]E
-
-	_, c := m.m.Dims()
-	for j := 0; j < c; j++ {
-		cols = append(cols, Col[E](m, j))
-	}
-
-	return cols
+func (m *Matrix[E]) RawData() []E {
+	return Float64ToNumber[E](m.m.RawMatrix().Data)
 }

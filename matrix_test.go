@@ -21,8 +21,8 @@ func TestMatrix_Norm(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		m := paddle.NewMatrix(paddle.NewTypedTensor[float32](tt.inTensor))
-		gotData := paddle.Float64ToNumber[float32](m.Norm().RawData())
+		m := paddle.NewMatrix[float32](tt.inTensor)
+		gotData := m.Norm().RawData()
 		if !cmp.Equal(gotData, tt.wantData) {
 			diff := cmp.Diff(gotData, tt.wantData)
 			t.Errorf("Want - Got: %s", diff)
