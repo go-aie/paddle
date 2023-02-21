@@ -91,24 +91,7 @@ type Tensor struct {
 	Data  interface{}
 }
 
-func NewInputTensor[E any](value [][]E) Tensor {
-	if len(value) == 0 {
-		return Tensor{}
-	}
-
-	var flattened []E
-	for _, d := range value {
-		flattened = append(flattened, d...)
-	}
-
-	batchSize, dataSize := len(value), len(value[0])
-	return Tensor{
-		Shape: []int32{int32(batchSize), int32(dataSize), 1},
-		Data:  flattened,
-	}
-}
-
-func NewInputTensorFromOneDimSlice[E any](slice []E) Tensor {
+func NewTensorFromOneDimSlice[E any](slice []E) Tensor {
 	if len(slice) == 0 {
 		return Tensor{}
 	}
@@ -118,19 +101,72 @@ func NewInputTensorFromOneDimSlice[E any](slice []E) Tensor {
 	}
 }
 
-func NewInputTensorFromTwoDimSlice[E any](slice [][]E) Tensor {
+func NewTensorFromTwoDimSlice[E any](slice [][]E) Tensor {
 	if len(slice) == 0 {
 		return Tensor{}
 	}
 
 	var flattened []E
-	for _, d := range slice {
-		flattened = append(flattened, d...)
+	for _, batch := range slice {
+		flattened = append(flattened, batch...)
 	}
 
 	batchSize, dataSize := len(slice), len(slice[0])
 	return Tensor{
 		Shape: []int32{int32(batchSize), int32(dataSize)},
+		Data:  flattened,
+	}
+}
+
+func NewTensorFromThreeDimSlice[E any](slice [][][]E) Tensor {
+	if len(slice) == 0 {
+		return Tensor{}
+	}
+
+	var flattened []E
+	for _, batch := range slice {
+		for _, d1 := range batch {
+			flattened = append(flattened, d1...)
+		}
+	}
+
+	batchSize, dataSize1 := len(slice), len(slice[0])
+	var dataSize2 int
+	if dataSize1 > 0 {
+		dataSize2 = len(slice[0][0])
+	}
+
+	return Tensor{
+		Shape: []int32{int32(batchSize), int32(dataSize1), int32(dataSize2)},
+		Data:  flattened,
+	}
+}
+
+func NewTensorFromFourDimSlice[E any](slice [][][][]E) Tensor {
+	if len(slice) == 0 {
+		return Tensor{}
+	}
+
+	var flattened []E
+	for _, batch := range slice {
+		for _, d1 := range batch {
+			for _, d2 := range d1 {
+				flattened = append(flattened, d2...)
+			}
+		}
+	}
+
+	batchSize, dataSize1 := len(slice), len(slice[0])
+	var dataSize2, dataSize3 int
+	if dataSize1 > 0 {
+		dataSize2 = len(slice[0][0])
+		if dataSize2 > 0 {
+			dataSize3 = len(slice[0][0][0])
+		}
+	}
+
+	return Tensor{
+		Shape: []int32{int32(batchSize), int32(dataSize1), int32(dataSize2), int32(dataSize3)},
 		Data:  flattened,
 	}
 }
