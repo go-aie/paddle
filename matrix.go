@@ -1,31 +1,32 @@
 package paddle
 
 import (
+	"github.com/go-aie/xslices"
 	"gonum.org/v1/gonum/mat"
 )
 
-type Matrix[E Number] struct {
+type Matrix[E xslices.Number] struct {
 	m *mat.Dense
 }
 
-func NewMatrix[E Number](t Tensor) *Matrix[E] {
+func NewMatrix[E xslices.Number](t Tensor) *Matrix[E] {
 	tt := NewTypedTensor[E](t)
 	if len(tt.Shape) != 2 {
 		panic("t is not a matrix")
 	}
 
-	m := mat.NewDense(int(tt.Shape[0]), int(tt.Shape[1]), NumberToFloat64(tt.Data))
+	m := mat.NewDense(int(tt.Shape[0]), int(tt.Shape[1]), xslices.NumberToFloat64(tt.Data))
 	return &Matrix[E]{m: m}
 }
 
 func (m *Matrix[E]) Row(i int) []E {
 	r := mat.Row(nil, i, m.m)
-	return Float64ToNumber[E](r)
+	return xslices.Float64ToNumber[E](r)
 }
 
 func (m *Matrix[E]) Col(j int) []E {
 	c := mat.Col(nil, j, m.m)
-	return Float64ToNumber[E](c)
+	return xslices.Float64ToNumber[E](c)
 }
 
 func (m *Matrix[E]) Rows() [][]E {
@@ -66,5 +67,5 @@ func (m *Matrix[E]) Norm() *Matrix[E] {
 }
 
 func (m *Matrix[E]) RawData() []E {
-	return Float64ToNumber[E](m.m.RawMatrix().Data)
+	return xslices.Float64ToNumber[E](m.m.RawMatrix().Data)
 }

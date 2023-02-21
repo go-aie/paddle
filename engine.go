@@ -3,6 +3,7 @@ package paddle
 import (
 	"fmt"
 
+	"github.com/go-aie/xslices"
 	paddle "github.com/paddlepaddle/paddle/paddle/fluid/inference/goapi"
 )
 
@@ -142,12 +143,12 @@ func numElements(shape []int32) int32 {
 	return n
 }
 
-type TypedTensor[E Number] struct {
+type TypedTensor[E xslices.Number] struct {
 	Shape []int32
 	Data  []E
 }
 
-func NewTypedTensor[E Number](t Tensor) TypedTensor[E] {
+func NewTypedTensor[E xslices.Number](t Tensor) TypedTensor[E] {
 	var data []E
 	switch v := t.Data.(type) {
 	case []float32:
