@@ -7,12 +7,13 @@ Go Inference Engine for [PaddlePaddle][1].
 
 ## Installation
 
-1. Install [Paddle Inference Go API][3]
-2. Install `paddle`
+1. Install `paddle`
 
     ```bash
     $ go get -u github.com/go-aie/paddle
     ```
+
+2. Install [Paddle Inference Go API](cmd/paddle)
 
 
 ## Documentation
@@ -52,4 +53,3 @@ See also:
 
 [1]: https://github.com/PaddlePaddle/Paddle
 [2]: https://pkg.go.dev/github.com/go-aie/paddle
-[3]: https://www.paddlepaddle.org.cn/inference/master/guides/install/go_install.html
