@@ -37,13 +37,23 @@ Flags:
 
 ```bash
 $ cd <your-project-root-path>
-$ paddle install <url-of-paddle-inference-c-lib> -v
+$ paddle install -v <url-of-paddle-inference-c-lib>
 ```
 
- Note:
- - `<your-project-root-path>`: The root path of your local project.
- - `<url-of-paddle-inference-c-lib>`: Check out [下载安装 Linux 推理库][2] to select the C library you need.
- - Since `paddle install` will modify the read-only Go module cache, most of the time, you need the sudo privilege to run the command (i.e. `sudo paddle install ...`).
+Note:
+
+- `<your-project-root-path>`: The root path of your local project.
+- `<url-of-paddle-inference-c-lib>`: Check out [下载安装 Linux 推理库][2] to select the C library you need.
+- Since `paddle install` will modify the read-only Go module cache, most of the time, you need the sudo privilege to run the command (i.e. `sudo paddle install ...`).
+
+Take Mac M1 as an example, we should select the C library [labeled as "m1"][3] and run:
+
+```bash
+$ cd example-project-on-mac-m1
+$ paddle install -v https://paddle-inference-lib.bj.bcebos.com/2.4.1/cxx_c/MacOS/m1_clang_noavx_openblas/paddle_inference_c_install_dir.tgz
+```
+
 
 [1]: https://www.paddlepaddle.org.cn/inference/master/guides/install/go_install.html
 [2]: https://www.paddlepaddle.org.cn/inference/master/guides/install/download_lib.html
+[3]: https://www.paddlepaddle.org.cn/inference/master/guides/install/download_lib.html#id5
